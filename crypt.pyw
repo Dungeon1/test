@@ -36,15 +36,15 @@ def get_data():
 def crypt():
     plannertext = t1.get(1.0,'end-1c')
     key = t2.get("1.0",'end-1c')
-    key = list(map(int, key.split(' ')))
-    key = [i-1 for i in key]
+    rule = list(map(int, key.split(' ')))
+    rule = [i-1 for i in rule]
     blocks = []
-    for x in range(0, len(plannertext), len(key)):
-        blocks.append(plannertext[x:x+len(key)])
+    for x in range(0, len(plannertext), len(rule)):
+        blocks.append(plannertext[x:x+len(rule)])
     ciphertext = ""
     for block in blocks:
         try:
-            enc_block = [block[i] for i in key]
+            enc_block = [block[i] for i in rule]
             ciphertext += "".join(enc_block)
         except IndexError:
             ciphertext += "".join(block)
@@ -54,11 +54,11 @@ def crypt():
         exist = os.path.isfile('cipher.docx')
         if exist:
             doc = Document('cipher.docx')
-            doc.add_paragraph('Ваш шифртекст:\n'+ciphertext+'\nКлюч:'+str(key))
+            doc.add_paragraph('Ваш шифртекст:\n'+ciphertext+'\nКлюч:'+key)
             doc.save('cipher.docx')
         else:
             doc = Document()
-            doc.add_paragraph('Ваш шифртекст:\n'+ciphertext+'\nКлюч:'+str(key))
+            doc.add_paragraph('Ваш шифртекст:\n'+ciphertext+'\nКлюч:'+key)
             doc.save('cipher.docx')
 
 #Для контекстного меню ПКМ        
