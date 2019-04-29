@@ -55,7 +55,7 @@ def crypt():
         if exist:
             doc = Document('cipher.docx')
             doc.add_paragraph('Ваш шифртекст:\n'+ciphertext+'\nКлюч:'+str(key))
-            doc.save('cipher.docx')#Максим пидор
+            doc.save('cipher.docx')
         else:
             doc = Document()
             doc.add_paragraph('Ваш шифртекст:\n'+ciphertext+'\nКлюч:'+str(key))
