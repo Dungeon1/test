@@ -19,7 +19,7 @@ def get_data():
     text = fileopen()
     plannertexts = []
     keys = []
-    for line in text.split("Ключ"):
+    for line in text.split("\n\n"):
         if line != "":
             if line[0].isdigit():
                 keys.append(line)
@@ -30,9 +30,9 @@ def get_data():
     t1.delete(1.0, END)
     t2.delete(1.0, END)
     for line in plannertexts:                                 
-        t1.insert(1.0, line + '\n')
+        t1.insert(1.0, line + '\n\n')
     for line in keys:
-        t2.insert(1.0, line + '\n')
+        t2.insert(1.0, line + '\n\n')
 
 #Шифрует одну пару текст-ключ
 def crypt_one(plannertext, key):
