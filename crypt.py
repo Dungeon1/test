@@ -4,6 +4,15 @@ import tkinter.scrolledtext as st
 import docx2txt
 import os
 from docx import Document
+rm = """1.    Заполните поля, разделяя различные открытые тексты и ключи пустой строкой.
+
+2.    Шифрование осуществляется поблочно, с длиной блока равной длине ключа.
+     Если длина ключа больше длины открытого текста (блока), то текст остаётся без изменений.
+
+3.    Кнопка «Выбрать файл» автоматически переносит данные из .docx и .txt файлов в поля программы. 
+
+4.    Если включена галочка «Записать в cipher.docx», то программа создаст указанный документ в директории с программой
+    и будет записывать в него выходные данные каждый раз после нажатия кнопки «Зашифровать»."""
 
 def fileopen():
     file = filedialog.askopenfilename(initialdir="/Рабочий стол",title="Select file",filetypes=(("Text document","*.txt *.docx"),("all files","*.*")))
@@ -33,6 +42,11 @@ def get_data():
         t1.insert(1.0, line + '\n\n')
     for line in keys:
         t2.insert(1.0, line + '\n\n')
+def readme():
+    wind = Toplevel(root)
+    wind.title('Инструкция')
+    display = Label(wind,text=rm,font ='Arial 13',justify =LEFT)
+    display.pack()
 
 #Шифрует одну пару текст-ключ
 def crypt_one(plannertext, key):
@@ -135,21 +149,24 @@ cv1 = IntVar()
 f_top = Frame()
 b1 = Button(f_top, text="Выбрать файл", width=20, height=3, command=get_data).pack(side=LEFT)
 b2 = Button(f_top, text="Зашифровать", width=20, height=3, command=crypt).pack(side=RIGHT)
+b3 = Button(f_top,text="Инструкция", width=15, height =2, command=readme).pack()
 c1 = Checkbutton(f_top,text="Записать в cipher.docx", variable=cv1, onvalue=1, offvalue=0).pack(side=RIGHT)
 f_top.pack()
 
 #фрейм с текстовыми полями
 f_bot = Frame()
 L1 = Label(f_bot, text="Введите открытый текст").pack(pady=10)
-t1 = st.ScrolledText(f_bot, width=50,height=10, font='Arial 13')
+t1 = st.ScrolledText(f_bot, width=50,height=5, font='Arial 13')
+t1. insert(1.0, "abcdefg\n\n" + "абвгдеёжз\n\n" + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
 t1.pack()
 
 L2 = Label(f_bot, text="Введите правило перестановки").pack(pady=10)
-t2 = st.ScrolledText(f_bot, width=50, height=10, font='Arial 13')
+t2 = st.ScrolledText(f_bot, width=50, height=5, font='Arial 13')
+t2.insert(1.0, "7 6 5 4 3 2 1\n\n" + "2 3 4 5 6 7 8 9 1\n\n" + "5 2 3 1 4")
 t2.pack()
 
 L3 = Label(f_bot, text="Зашифрованное сообщение").pack(pady=10)
-t3 = st.ScrolledText(f_bot, width=50, height=10, font='Arial 13')
+t3 = st.ScrolledText(f_bot, width=50, height=5, font='Arial 13')
 t3.pack()
 f_bot.pack()
 
