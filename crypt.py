@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import filedialog
+import tkinter.scrolledtext as st
 import docx2txt
 import os
 from docx import Document
@@ -119,7 +120,7 @@ def rClickbinder(r):
 
     
 root = Tk()
-
+root.title('Шифр перестановки')
 #Запускает окно по центру экрана
 windowWidth = root.winfo_reqwidth()
 windowHeight = root.winfo_reqheight()
@@ -140,15 +141,15 @@ f_top.pack()
 #фрейм с текстовыми полями
 f_bot = Frame()
 L1 = Label(f_bot, text="Введите открытый текст").pack(pady=10)
-t1 = Text(f_bot, width=50,height=10, font='Arial 13')
+t1 = st.ScrolledText(f_bot, width=50,height=10, font='Arial 13')
 t1.pack()
 
 L2 = Label(f_bot, text="Введите правило перестановки").pack(pady=10)
-t2 = Text(f_bot, width=50, height=10, font='Arial 13')
+t2 = st.ScrolledText(f_bot, width=50, height=10, font='Arial 13')
 t2.pack()
 
 L3 = Label(f_bot, text="Зашифрованное сообщение").pack(pady=10)
-t3 = Text(f_bot, width=50, height=10, font='Arial 13')
+t3 = st.ScrolledText(f_bot, width=50, height=10, font='Arial 13')
 t3.pack()
 f_bot.pack()
 
