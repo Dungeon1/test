@@ -19,7 +19,7 @@ def get_data():
     text = fileopen()
     plannertexts = []
     keys = []
-    for line in text.splitlines():
+    for line in text.split("Ключ"):
         if line != "":
             if line[0].isdigit():
                 keys.append(line)
@@ -48,16 +48,16 @@ def crypt_one(plannertext, key):
             ciphertext += "".join(enc_block)
         except IndexError:
             ciphertext += "".join(block)       
-    t3.insert(1.0, ciphertext + '\n')
+    t3.insert(1.0, ciphertext + '\n\n')
     if cv1.get() == 1:
         exist = os.path.isfile('cipher.docx')
         if exist:
             doc = Document('cipher.docx')
-            doc.add_paragraph('Ваш шифртекст:\n'+ciphertext+'\nКлюч: '+key)
+            doc.add_paragraph('Исходный текст:\n'+plannertext+'\nШифртекст:\n'+ciphertext+'\nКлюч: '+key)
             doc.save('cipher.docx')
         else:
             doc = Document()
-            doc.add_paragraph('Ваш шифртекст:\n'+ciphertext+'\nКлюч: '+key)
+            doc.add_paragraph('Исходный текст:\n'+plannertext+'\nШифртекст:\n'+ciphertext+'\nКлюч: '+key)
             doc.save('cipher.docx') 
 
 #Шифрует все данные из полей 
@@ -65,10 +65,10 @@ def crypt():
     t3.delete(1.0, END)
     plannertexts = []
     keys = []
-    for line in t1.get(1.0,'end-1c').splitlines():
+    for line in t1.get(1.0,'end-1c').split("\n\n"):
         if line != "":
             plannertexts.append(line)
-    for line in t2.get(1.0,'end-1c').splitlines():
+    for line in t2.get(1.0,'end-1c').split("\n\n"):
         if line != "":
             keys.append(line)
     plannertexts = reversed(plannertexts)
