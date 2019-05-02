@@ -4,17 +4,18 @@ import tkinter.scrolledtext as st
 import docx2txt
 import os
 from docx import Document
-rm = """1.    Заполните поля, разделяя различные открытые тексты и ключи пустой строкой.
+from random import shuffle
+rm = """1. Заполните поля, разделяя различные открытые тексты и ключи пустой строкой.
 
-2.    Шифрование осуществляется следующим образом: на вход идет строка исходного текста и строка правила замены(без лишних знаков).
+2. Шифрование осуществляется следующим образом: на вход идет строка исходного текста и строка правила замены(без лишних знаков).
     Для распознавания в файле исходного текста и правила замены используйте конструкцию вида:
     Текст: "набор символов"
     Ключ: "Правило замены"
 
-3.    Кнопка «Выбрать файл» автоматически переносит данные из .docx и .txt файлов в поля программы. 
+3. Кнопка «Выбрать файл» автоматически переносит данные из .docx и .txt файлов в поля программы. 
 
-4.    Если включена галочка «Записать в cipher.docx», то программа создаст указанный документ в директории с программой
-    и будет записывать в него выходные данные каждый раз после нажатия кнопки «Зашифровать»."""
+4. Если включена галочка «Записать в cipher.docx», то программа создаст указанный документ в директории с программой
+   и будет записывать в него выходные данные каждый раз после нажатия кнопки «Зашифровать»."""
 def fileopen():
     file = filedialog.askopenfilename(initialdir="/Рабочий стол",title="Select file",filetypes=(("Text document","*.txt *.docx"),("all files","*.*")))
     if file.endswith(".docx"):
@@ -25,6 +26,8 @@ def fileopen():
     return text
 symbolsAlpha = ['а','б','в','г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п',
                 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь','э', 'ю','я']
+Exceptions = ['ё',' ','!','@','#','$','%','^','&','*','(',')','-','=',
+'+','?',':',';','<','>','/','[',']','{','}','|','.',',','~']
 def get_data():
     text = fileopen()
     plannertexts = []
@@ -48,11 +51,19 @@ def readme():
     wind.title('Инструкция')
     display = Label(wind,text=rm,font ='Arial 13',justify =LEFT)
     display.pack()
+def generator():
+    rand = symbolsAlpha
+    shuffle(rand)
+    rand = ''.join(rand)
+    t2.delete(1.0, END)
+    t2.insert(1.0, rand)
 def crypt_one(plannertext, key):
     rule = list(key)
     keys = dict(zip(symbolsAlpha,rule))
     ciphertext=""
     for i in plannertext.lower():
+        if i in Exceptions:
+            ciphertext += i
         if i in keys:
             ciphertext+=keys[i]
     t3.insert(1.0, ciphertext + '\n\n')
@@ -138,7 +149,7 @@ b2 = Button(f_top, text="Зашифровать", width=20, height=3, command = 
 b3 = Button(f_top,text="Инструкция", width=15, height =2, command = readme).pack()
 c1 = Checkbutton(f_top,text="Записать в cipher.docx", variable=cv1, onvalue=1, offvalue=0).pack(side=RIGHT)
 f_top.pack()
-
+b4 = Button(text='Случайный ключ', width=15, height=2, command=generator).pack()
 #фрейм с текстовыми полями
 f_bot = Frame()
 L1 = Label(f_bot, text="Введите открытый текст").pack(pady=10)
