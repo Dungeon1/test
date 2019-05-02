@@ -5,14 +5,13 @@ import docx2txt
 import os
 from docx import Document
 import random
-rm = """1. Заполните поля, разделяя различные открытые тексты и ключи пустой строкой.
+rm = """1. Запишите открытый текст, разделяя различные тексты пустой строкой. Большие буквы переводятся в большие,
+символы нерусского алфавита переводятся в себя.
 
-2. Шифрование осуществляется следующим образом: на вход идет строка исходного текста и строка правила замены(без лишних знаков).
-    Для распознавания в файле исходного текста и правила замены используйте конструкцию вида:
-    Текст: "набор символов"
-    Ключ: "Правило замены"
+2. Запишите правило замены длиной 32 символа (без 'ё'), отделяя различные правила пустой строкой.
 
-3. Кнопка «Выбрать файл» автоматически переносит данные из .docx и .txt файлов в поля программы. 
+3. Кнопка «Выбрать файл» автоматически переносит данные из .docx и .txt файлов в поля программы. Правило записи данных
+   приведено в документе-образце. 
 
 4. Если включена галочка «Записать в cipher.docx», то программа создаст указанный документ в директории с программой
    и будет записывать в него выходные данные каждый раз после нажатия кнопки «Зашифровать»."""
@@ -28,26 +27,26 @@ symbolsAlpha = ['а','б','в','г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', '
                 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь','э', 'ю','я']
 symbolsRand = ['а','б','в','г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п',
                 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь','э', 'ю','я']
-Exceptions = ['ё',' ','!','@','#','$','%','^','&','*','(',')','-','=',
-'+','?',':',';','<','>','/','[',']','{','}','|','.',',','~']
 def get_data():
     text = fileopen()
+    content = []
     plannertexts = []
     key = []
-    for line in text.split("\n\n"):
-        if line != "":
-            if line.startswith("Текст: "):
-                plannertexts.append(line.strip("Текст: "))
-            else:
-                key.append(line.strip("Ключ: "))
+    content = text.split('\n\n')
+    for i in range(0, len(content)):
+        if (i%2 == 0):
+            plannertexts.append(content[i])
+        else:
+            key.append(content[i])
+            
     plannertexts = reversed(plannertexts)
     key = reversed(key)
     t1.delete(1.0, END)
     t2.delete(1.0, END)
     for line in plannertexts:                                 
-        t1.insert(1.0, line )
+        t1.insert(1.0, line + '\n\n')
     for line in key:
-        t2.insert(1.0, line )
+        t2.insert(1.0, line + '\n\n')
 def readme():
     wind = Toplevel(root)
     wind.title('Инструкция')
@@ -56,17 +55,19 @@ def readme():
 def generator():
     random.shuffle(symbolsRand)
     rand = ''.join(symbolsRand).strip("\n")
-    t2.delete(1.0, END)
-    t2.insert(1.0, rand)
+    t2.insert(INSERT, rand + '\n\n')
 def crypt_one(plannertext, key):
     rule = list(key)
     keys = dict(zip(symbolsAlpha,rule))
     ciphertext=""
-    for i in plannertext.lower():
-        if i in Exceptions:
+    for i in plannertext:
+        if i.isupper():
+            ciphertext+=keys[i.lower()].upper()
+        elif i not in symbolsAlpha:
             ciphertext += i
-        if i in keys:
+        else:
             ciphertext+=keys[i]
+
     t3.insert(1.0, ciphertext + '\n\n')
     if cv1.get() == 1:
         exist = os.path.isfile('cipher.docx')
@@ -89,84 +90,39 @@ def crypt():
         if line != "":
             keys.append(line)
     plannertexts = reversed(plannertexts)
-    keys = reversed(keys)            
+    keys = reversed(keys)
     ciphertexts = list(map(crypt_one, plannertexts, keys))
-def rClicker(e):
-    try:
-        def rClick_Copy(e, apnd=0):
-            e.widget.event_generate('<Control-c>')
-
-        def rClick_Cut(e):
-            e.widget.event_generate('<Control-x>')
-
-        def rClick_Paste(e):
-            e.widget.event_generate('<Control-v>')
-
-        e.widget.focus()
-
-        nclst=[
-               (' Cut', lambda e=e: rClick_Cut(e)),
-               (' Copy', lambda e=e: rClick_Copy(e)),
-               (' Paste', lambda e=e: rClick_Paste(e)),
-               ]
-
-        rmenu = Menu(None, tearoff=0, takefocus=0)
-
-        for (txt, cmd) in nclst:
-            rmenu.add_command(label=txt, command=cmd)
-
-        rmenu.tk_popup(e.x_root+40, e.y_root+10,entry="0")
-
-    except TclError:
-        pass
-
-    return "break"
-
-
-def rClickbinder(r):
-    try:
-        for b in [ 'Text', 'Entry', 'Listbox', 'Label']: 
-            r.bind_class(b, sequence='<Button-3>',
-                         func=rClicker, add='')
-    except TclError:
-        pass
 
 root = Tk()
 root.title('Шифр замены')
 #Запускает окно по центру экрана
-windowWidth = root.winfo_reqwidth()
-windowHeight = root.winfo_reqheight()
-positionRight = int(root.winfo_screenwidth()/2 - windowWidth/2)
-positionDown = int(root.winfo_screenheight()/2 - windowHeight/2)
-root.geometry("+{}+{}".format(positionRight, positionDown))
 
 #Переменные
 cv1 = IntVar()
 
 #фрейм с кнопками
 f_top = Frame()
-b1 = Button(f_top, text="Выбрать файл", width=20, height=3, command=get_data).pack(side=LEFT)
-b2 = Button(f_top, text="Зашифровать", width=20, height=3, command = crypt).pack(side=RIGHT)
-b3 = Button(f_top,text="Инструкция", width=15, height =2, command = readme).pack()
-c1 = Checkbutton(f_top,text="Записать в cipher.docx", variable=cv1, onvalue=1, offvalue=0).pack(side=RIGHT)
+b1 = Button(f_top, text="Выбрать файл", width=15, height=2, command=get_data).pack(side=LEFT)
+b2 = Button(f_top, text="Зашифровать", width=15, height=2, command = crypt).pack(side=LEFT)
+b3 = Button(f_top, text="Инструкция", width=15, height =2, command = readme).pack(side=RIGHT)
+b4 = Button(f_top, text='Случайный ключ', width=15, height=2, command=generator).pack(side=RIGHT)
 f_top.pack()
-b4 = Button(text='Случайный ключ', width=15, height=2, command=generator).pack()
+c1 = Checkbutton(text="Записать в cipher.docx", variable=cv1, onvalue=1, offvalue=0).pack()
 #фрейм с текстовыми полями
 f_bot = Frame()
-L1 = Label(f_bot, text="Введите открытый текст").pack(pady=10)
-t1 = st.ScrolledText(f_bot, width=50,height=5, font='Arial 13')
-t1. insert(1.0, "Елка\n\n" + "Ежик в тумане\n\n")
+L1 = Label(f_bot, text="Введите открытый текст").pack(pady=2)
+t1 = st.ScrolledText(f_bot, width=50,height=8, font='Arial 13')
+t1. insert(1.0, "абвгдеёжзийклмнопрстуфхцчшщъыьэюя\n\n" + "Это шифр простой замены для символов русского алфавита без буквы йо.\n\n")
 t1.pack()
 
-L2 = Label(f_bot, text="Введите правило замены").pack(pady=10)
-t2 = st.ScrolledText(f_bot, width=50, height=5, font='Arial 13')
-t2.insert(1.0, "гдеёжзйклмнопрстуфхцчшщъыьэюяабв\n\n" + "вдзжм\n\n")
+L2 = Label(f_bot, text="Введите правило замены").pack(pady=2)
+t2 = st.ScrolledText(f_bot, width=50, height=8, font='Arial 13')
+t2.insert(1.0, "яюэьыъщшчцхфутсрпонмлкйизжедгвба\n\n" + "бвгдежзийклмнопрстуфхцчшщъыьэюяа\n\n")
 t2.pack()
 
-L3 = Label(f_bot, text="Зашифрованное сообщение").pack(pady=10)
-t3 = st.ScrolledText(f_bot, width=50, height=5, font='Arial 13')
+L3 = Label(f_bot, text="Зашифрованное сообщение").pack(pady=2)
+t3 = st.ScrolledText(f_bot, width=50, height=8, font='Arial 13')
 t3.pack()
 f_bot.pack()
 
-rClickbinder(root)
 root.mainloop()
