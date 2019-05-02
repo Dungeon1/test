@@ -4,7 +4,7 @@ import tkinter.scrolledtext as st
 import docx2txt
 import os
 from docx import Document
-from random import shuffle
+import random
 rm = """1. Заполните поля, разделяя различные открытые тексты и ключи пустой строкой.
 
 2. Шифрование осуществляется следующим образом: на вход идет строка исходного текста и строка правила замены(без лишних знаков).
@@ -25,6 +25,8 @@ def fileopen():
         text = text.read()
     return text
 symbolsAlpha = ['а','б','в','г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п',
+                'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь','э', 'ю','я']
+symbolsRand = ['а','б','в','г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п',
                 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь','э', 'ю','я']
 Exceptions = ['ё',' ','!','@','#','$','%','^','&','*','(',')','-','=',
 '+','?',':',';','<','>','/','[',']','{','}','|','.',',','~']
@@ -52,9 +54,8 @@ def readme():
     display = Label(wind,text=rm,font ='Arial 13',justify =LEFT)
     display.pack()
 def generator():
-    rand = symbolsAlpha
-    shuffle(rand)
-    rand = ''.join(rand)
+    random.shuffle(symbolsRand)
+    rand = ''.join(symbolsRand).strip("\n")
     t2.delete(1.0, END)
     t2.insert(1.0, rand)
 def crypt_one(plannertext, key):
