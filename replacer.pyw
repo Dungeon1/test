@@ -8,6 +8,10 @@ import random
 
 symbolsAlpha = ['а','б','в','г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п',
                 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь','э', 'ю','я']
+
+symbolsBetta = ['А','Б','В','Г', 'Д', 'Е', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П',
+                'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь','Э', 'Ю','Я']
+
 symbolsRand = ['а','б','в','г', 'д', 'е', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п',
                 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь','э', 'ю','я']
 
@@ -37,12 +41,13 @@ def crypt():
     keys = dict(zip(symbolsAlpha,rule))
     ciphertext=""
     for i in plannertext:
-        if i.isupper():
-            ciphertext+=keys[i.lower()].upper()
-        elif i not in symbolsAlpha:
-            ciphertext += i
+        if i in symbolsAlpha:
+            ciphertext += keys[i]
+        elif i in symbolsBetta:
+            ciphertext += keys[i.lower()].upper()
         else:
-            ciphertext+=keys[i]
+            ciphertext += i
+
     t3.delete(1.0, END)        
     t3.insert(1.0, ciphertext)
     if cv1.get() == 1:
@@ -56,6 +61,11 @@ def crypt():
             doc.add_paragraph('Исходный текст:\n'+plannertext+'\nШифртекст:\n'+ciphertext+'\nКлюч: '+key)
             doc.save('cipher.docx')
 
+def clear():
+    t1.delete(1.0, END)
+    t2.delete(0, END)
+    t3.delete(1.0, END)
+    
 root = Tk()
 root.title('Шифр замены')
 
@@ -64,7 +74,8 @@ cv1 = IntVar()
 f_top = Frame()
 b1 = Button(f_top, text="Выбрать файл", width=15, height=2, command=get_data).pack(side=LEFT)
 b2 = Button(f_top, text="Зашифровать", width=15, height=2, command = crypt).pack(side=LEFT)
-b4 = Button(f_top, text='Случайный ключ', width=15, height=2, command=generator).pack(side=RIGHT)
+b4 = Button(f_top, text='Случайный ключ', width=15, height=2, command=generator).pack(side=LEFT)
+b5 = Button(f_top, text='Очистить все', width=15, height=2, command=clear).pack(side=RIGHT)
 f_top.pack()
 
 c1 = Checkbutton(text="Записать в cipher.docx", variable=cv1, onvalue=1, offvalue=0).pack()
