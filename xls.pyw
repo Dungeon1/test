@@ -1,8 +1,10 @@
 from tkinter import *
+import tkinter.scrolledtext as st
 from tkinter import filedialog
 import xlrd
 import matplotlib.pyplot as plt
 import numpy as np
+import logging
 
 rb = xlrd.book.Book()
 dictt = {'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'G':7,'H':8,
@@ -22,7 +24,10 @@ def fileopen():
         for j in range(6,17):
             cell = sheet.cell(i,j)
             if cell.value != '':
-                comp.append(cell.value) 
+                comp.append(cell.value)
+    st.configure(state='normal')
+    st.insert(END,"[Logs] Файл "+file+" добавлен\n")
+    st.configure(state='disabled')    
    
 def auto():
     global mas
@@ -43,7 +48,10 @@ def auto():
         for j in range(6,17):
             cell = sheet.cell(i,j)
             if cell.value != '':
-                mas.append(cell.value)           
+                mas.append(cell.value)
+    st.configure(state='normal')
+    st.insert(END,"[Logs] Добавлен стандартный диапазон\n")
+    st.configure(state='disabled')         
 
 def data():
     global mas
@@ -59,7 +67,10 @@ def data():
         for j in range(column1,column2):
             cell = sheet.cell(i,j)
             if cell.value != '':
-                mas.append(cell.value)                
+                mas.append(cell.value)
+    st.configure(state='normal')
+    st.insert(END,"[Logs] Добавлен выбранный диапазон\n")
+    st.configure(state='disabled')                   
           
 def graph():
     h =[]
@@ -67,23 +78,27 @@ def graph():
     for i in comp:
         d[i]= mas.count(i)
         h.append(mas.count(i))
-
     x = np.arange(len(comp))
     plt.bar(x, height=h)
     plt.xticks(x, comp, rotation=90)
+    st.configure(state='normal')
+    st.insert(END,"[Logs] График построен\n")
+    st.configure(state='disabled') 
     plt.show()
+  
 
 
 root = Tk()
 root.title('Учебный план')
-
+#Кнопки
 f_top = Frame()
 b1 = Button(f_top, text="Выбрать файл", width=15, height=2, command=fileopen).pack(side=LEFT)
 b2 = Button(f_top, text="Построить", width=15, height=2, command=graph).pack(side=LEFT)
 b3 = Button(f_top, text="Добавить диапазон", width=15, height=2, command=data).pack(side=LEFT)
-b4 = Button(f_top, text="Автоматический диапазон", width=15, height=2, command=auto).pack(side=LEFT)
+b4 = Button(f_top, text="Автоматический диапазон", width=20, height=2, command=auto).pack(side=LEFT)
 f_top.pack()
 
+#лейблы
 f_data = Frame()
 L1 = Label(f_data, text="Левая верхняя ячейка").pack(side=TOP, pady=2)
 t1 = Entry(f_data, width=6, font='Arial 13')
@@ -96,4 +111,7 @@ t3 = Entry(f_data, width=6, font='Arial 13')
 t3.pack()
 f_data.pack()
 
+#Лог
+st = st.ScrolledText( width=60, height=15, font='Arial 12', state = 'disabled')
+st.pack()
 root.mainloop()
