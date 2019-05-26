@@ -19,6 +19,9 @@ def fileopen():
     global rb
     rb = xlrd.open_workbook(file, formatting_info=True)
     global comp
+    global mas
+    mas.clear()
+    comp.clear()
     sheet = rb.sheet_by_index(5)
     for i in range(3,7):
         for j in range(6,17):
@@ -52,6 +55,7 @@ def auto():
     st.configure(state='normal')
     st.insert(END,"[Logs] Добавлен стандартный диапазон\n")
     st.configure(state='disabled')         
+    graph()
 
 def data():
     global mas
@@ -69,7 +73,7 @@ def data():
             if cell.value != '':
                 mas.append(cell.value)
     st.configure(state='normal')
-    st.insert(END,"[Logs] Добавлен выбранный диапазон\n")
+    st.insert(END,"[Logs] Добавлен выбранный диапазон: "+st1+":"+st2+"\n")
     st.configure(state='disabled')                   
           
 def graph():
@@ -85,33 +89,47 @@ def graph():
     st.insert(END,"[Logs] График построен\n")
     st.configure(state='disabled') 
     plt.show()
-  
 
+def clear():
+    global mas
+    mas.clear()
+    st.configure(state='normal')
+    st.insert(END,"[Logs] Все данные очищены\n")
+    st.configure(state='disabled')    
 
 root = Tk()
 root.title('Учебный план')
-#Кнопки
+
 f_top = Frame()
-b1 = Button(f_top, text="Выбрать файл", width=15, height=2, command=fileopen).pack(side=LEFT)
-b2 = Button(f_top, text="Построить", width=15, height=2, command=graph).pack(side=LEFT)
+b1 = Button(f_top, text="Выбрать файл", width=12, height=2, command=fileopen).pack(side=LEFT)
+b2 = Button(f_top, text="Построить", width=10, height=2, command=graph).pack(side=LEFT)
 b3 = Button(f_top, text="Добавить диапазон", width=15, height=2, command=data).pack(side=LEFT)
-b4 = Button(f_top, text="Автоматический диапазон", width=20, height=2, command=auto).pack(side=LEFT)
+b4 = Button(f_top, text="Построить автоматически", width=21, height=2, command=auto).pack(side=LEFT)
+b5 = Button(f_top, text="Очистить", width=8, height=2, command=clear).pack(side=LEFT)
 f_top.pack()
 
-#лейблы
-f_data = Frame()
-L1 = Label(f_data, text="Левая верхняя ячейка").pack(side=TOP, pady=2)
-t1 = Entry(f_data, width=6, font='Arial 13')
-t1.pack()
-L2 = Label(f_data, text="Правая нижняя ячейка").pack(side=TOP, pady=2)
-t2 = Entry(f_data, width=6, font='Arial 13')
-t2.pack()
-L1 = Label(f_data, text="Номер листа").pack(side=TOP, pady=2)
-t3 = Entry(f_data, width=6, font='Arial 13')
-t3.pack()
-f_data.pack()
+f_main = Frame()
 
-#Лог
-st = st.ScrolledText( width=60, height=15, font='Arial 12', state = 'disabled')
+f3 = LabelFrame(f_main, text="Номер листа")
+t3 = Entry(f3, width=6, font='Arial 13')
+t3.pack(fill=X)
+f3.pack(padx=5, side=LEFT)
+
+f1 = LabelFrame(f_main, text="Левая верхняя ячейка")
+t1 = Entry(f1, width=6, font='Arial 13')
+t1.pack(fill=X)
+f1.pack(padx=5, side=LEFT)
+
+f2 = LabelFrame(f_main, text="Правая нижняя ячейка")
+t2 = Entry(f2, width=6, font='Arial 13')
+t2.pack(fill=X)
+f2.pack(padx=5, side=LEFT)
+
+f_main.pack()
+
+f4 = Frame()
+st = st.ScrolledText(f4, width=60, height=10, font='Arial 12', state = 'disabled')
 st.pack()
+f4.pack(pady=4)
+
 root.mainloop()
