@@ -1,3 +1,4 @@
+"""Soft by HackTheSystem"""
 from tkinter import *
 import tkinter.scrolledtext as st
 from tkinter import filedialog
